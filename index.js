@@ -17,6 +17,7 @@ app.use(express.json());
 
 app.use("/api/mercados-mediavales", require("./routes/eventos"));
 
-app.listen(5038, () => {
+const port = process.env.PORT || 5038;
+app.listen(port, () => {
   console.log("Conectado");
 });
