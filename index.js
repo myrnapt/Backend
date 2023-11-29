@@ -1,37 +1,109 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const express = require("express");
-const mongoose = require("mongoose");
-
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const express = require('express');
+const mongoose = require('mongoose');
+const Evento = require('./models/eventos');
 
 const app = express();
-const port = process.env.PORT || 5038;
+const PORT = process.env.PORT || 5038;
 
+mongoose.set('strictQuery', false);
 
-app.use(bodyParser.json());
-
-app.use(cors());
-
-app.use(express.json());
-
-app.use("/api/mercados-mediavales", require("./routes/eventos"));
-
-mongoose.set();
-
-
-const conectarDB = async () => {
+const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
-    console.log("Database connected");
+    const conn = await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    console.log(error);
     process.exit(1);
   }
 };
-conectarDB().then(() => {
-  app.listen(port, () => {
-    console.log("Conectado");
+
+// Routes
+app.get('/', (req, res) => {
+  res.send({ title: 'Eventos' });
+});
+
+app.get('/eventos', async (req, res) => {
+  try {
+    const eventos = await Evento.find();
+    res.json(eventos);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Hubo un error');
+  }
+});
+
+app.post('/eventos', async (req, res) => {
+  try {
+    const evento = new Evento(req.body);
+    await evento.save();
+    res.send(evento);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Hubo un error');
+  }
+});
+
+app.put('/eventos/:id', async (req, res) => {
+  try {
+    const { email, name, dataStart, dataEnd, description, direccion, region, provincia, busqueda, isPublished } = req.body;
+    let evento = await Evento.findById(req.params.id);
+
+    if (!evento) {
+      res.status(404).json({ msg: 'No existe el evento' });
+    }
+
+    evento.email = email;
+    evento.name = name;
+    evento.dataStart = dataStart;
+    evento.dataEnd = dataEnd;
+    evento.busqueda = busqueda;
+    evento.description = description;
+    evento.direccion = direccion;
+    evento.region = region;
+    evento.provincia = provincia;
+    evento.isPublished = isPublished;
+
+    evento = await Evento.findOneAndUpdate({ _id: req.params.id }, evento, { new: true });
+    res.json();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Hubo un error');
+  }
+});
+
+app.get('/eventos/:id', async (req, res) => {
+  try {
+    const evento = await Evento.findById(req.params.id);
+    if (!evento) {
+      res.status(404).json({ msg: 'No existe el evento' });
+    }
+    res.json(evento);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Hubo un error');
+  }
+});
+
+app.delete('/eventos/:id', async (req, res) => {
+  try {
+    const evento = await Evento.findById(req.params.id);
+
+    if (!evento) {
+      res.status(404).json({ msg: 'No existe el evento' });
+    }
+    await Evento.findOneAndRemove({ _id: req.params.id });
+    res.json({ msg: 'Evento eliminado' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Hubo un error');
+  }
+});
+
+// Conectar a la base de datos antes de escuchar
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log('Escuchando peticiones');
   });
-})
+});
