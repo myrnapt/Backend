@@ -7,7 +7,6 @@ const bodyParser = require("body-parser");
 const app = express();
 
 // CONECTAMOS A LA BASE DE DATOS
-conectarDB();
 
 app.use(bodyParser.json());
 
@@ -18,6 +17,8 @@ app.use(express.json());
 app.use("/api/mercados-mediavales", require("./routes/eventos"));
 
 const port = process.env.PORT || 5038;
-app.listen(port, () => {
-  console.log("Conectado");
-});
+conectarDB().then(() => {
+  app.listen(port, () => {
+    console.log("Conectado");
+  });
+})
