@@ -19,7 +19,7 @@ const connectDB = async () => {
   }
 };
 app.use(cors({
-  origin: 'https://mercados-medievales.vercel.app/',
+  origin: '*',
   methods: 'GET,PUT,POST,DELETE',
 }));
 
