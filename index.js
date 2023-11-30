@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const Evento = require('./models/eventos');
-const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5038;
@@ -19,16 +18,6 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
-
-app.use(cors({
-  origin: 'http://localhost:4200', // Update this with your client's origin
-  methods: 'GET,PUT,POST,DELETE',
-  credentials: true,
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.options('*', cors());
-
 
 // Routes
 app.get('/', (req, res) => {
@@ -77,7 +66,7 @@ app.put('/eventos/:id', async (req, res) => {
     evento.isPublished = isPublished;
 
     evento = await Evento.findOneAndUpdate({ _id: req.params.id }, evento, { new: true });
-    res.json(evento);
+    res.json();
   } catch (error) {
     console.log(error);
     res.status(500).send('Hubo un error');
