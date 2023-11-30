@@ -33,7 +33,7 @@ app.get('/eventos', async (req, res) => {
     const eventos = await Evento.find();
     res.json(eventos);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send('Hubo un error');
   }
 });
@@ -42,9 +42,9 @@ app.post('/eventos', async (req, res) => {
   try {
     const evento = new Evento(req.body);
     await evento.save();
-    res.send(evento);
+    res.json(evento);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send('Hubo un error');
   }
 });
@@ -55,7 +55,7 @@ app.put('/eventos/:id', async (req, res) => {
     let evento = await Evento.findById(req.params.id);
 
     if (!evento) {
-      res.status(404).json({ msg: 'No existe el evento' });
+      return res.status(404).json({ msg: 'No existe el evento' });
     }
 
     evento.email = email;
@@ -72,7 +72,7 @@ app.put('/eventos/:id', async (req, res) => {
     evento = await Evento.findOneAndUpdate({ _id: req.params.id }, evento, { new: true });
     res.json(evento);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send('Hubo un error');
   }
 });
@@ -81,11 +81,11 @@ app.get('/eventos/:id', async (req, res) => {
   try {
     const evento = await Evento.findById(req.params.id);
     if (!evento) {
-      res.status(404).json({ msg: 'No existe el evento' });
+      return res.status(404).json({ msg: 'No existe el evento' });
     }
     res.json(evento);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send('Hubo un error');
   }
 });
@@ -95,15 +95,17 @@ app.delete('/eventos/:id', async (req, res) => {
     const evento = await Evento.findById(req.params.id);
 
     if (!evento) {
-      res.status(404).json({ msg: 'No existe el evento' });
+      return res.status(404).json({ msg: 'No existe el evento' });
     }
+
     await Evento.findOneAndRemove({ _id: req.params.id });
     res.json({ msg: 'Evento eliminado' });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send('Hubo un error');
   }
 });
+
 
 // Conectar a la base de datos antes de escuchar
 connectDB().then(() => {
