@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const Evento = require('./models/eventos');
-
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5038;
 
@@ -18,7 +18,11 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
-
+app.use(cors({
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
 // Routes
 app.get('/', (req, res) => {
   res.send({ title: 'Eventos' });
