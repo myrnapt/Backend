@@ -21,10 +21,13 @@ const connectDB = async () => {
 };
 
 app.use(cors({
-  origin: '*',
+  origin: 'http://localhost:4200', // Update this with your client's origin
   methods: 'GET,PUT,POST,DELETE',
   credentials: true,
 }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.options('*', cors());
 
 
 // Routes
@@ -74,7 +77,7 @@ app.put('/eventos/:id', async (req, res) => {
     evento.isPublished = isPublished;
 
     evento = await Evento.findOneAndUpdate({ _id: req.params.id }, evento, { new: true });
-    res.json();
+    res.json(evento);
   } catch (error) {
     console.log(error);
     res.status(500).send('Hubo un error');
