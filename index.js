@@ -19,10 +19,11 @@ const connectDB = async () => {
   }
 };
 app.use(cors({
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: 'https://mercados-medievales.vercel.app',
+  methods: 'GET,PUT,POST,DELETE',
   credentials: true,
 }));
+
 // Routes
 app.get('/', (req, res) => {
   res.send({ title: 'Eventos' });
