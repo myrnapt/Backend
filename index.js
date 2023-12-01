@@ -19,8 +19,10 @@ const connectDB = async () => {
   }
 };
 app.use(cors({
+  allowedHeaders: '*',
   origin: '*',
   methods: 'GET,PUT,POST,DELETE',
+  credentials: true,
 }));
 
 // Routes
