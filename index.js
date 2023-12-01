@@ -51,33 +51,29 @@ app.post('/eventos', async (req, res) => {
   }
 });
 
+// ...
 app.put('/eventos/:id', async (req, res) => {
   try {
+    console.log('PRUEBA PUT');
     const { email, name, dataStart, dataEnd, description, direccion, region, provincia, busqueda, isPublished } = req.body;
-    let evento = await Evento.findById(req.params.id);
 
-    if (!evento) {
+    const updatedEvento = await Evento.findByIdAndUpdate(
+      req.params.id,
+      { email, name, dataStart, dataEnd, description, direccion, region, provincia, busqueda, isPublished },
+      { new: true }
+    );
+
+    if (!updatedEvento) {
       return res.status(404).json({ msg: 'No existe el evento' });
     }
 
-    evento.email = email;
-    evento.name = name;
-    evento.dataStart = dataStart;
-    evento.dataEnd = dataEnd;
-    evento.busqueda = busqueda;
-    evento.description = description;
-    evento.direccion = direccion;
-    evento.region = region;
-    evento.provincia = provincia;
-    evento.isPublished = isPublished;
-
-    evento = await Evento.findOneAndUpdate({ _id: req.params.id }, evento, { new: true });
-    res.json(evento);
+    res.json(updatedEvento);
   } catch (error) {
     console.error(error);
     res.status(500).send('Hubo un error');
   }
 });
+
 
 app.get('/eventos/:id', async (req, res) => {
   try {
