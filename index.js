@@ -19,13 +19,15 @@ const connectDB = async () => {
   }
 };
 app.use(cors({
-  allowedHeaders: '*',
   origin: '*',
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
 
 // Routes
+app.options('*', cors());
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send({ title: 'Eventos' });
 });
