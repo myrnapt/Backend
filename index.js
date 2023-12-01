@@ -21,7 +21,7 @@ const connectDB = async () => {
 app.use(cors({
   allowedHeaders: '*',
   origin: '*',
-  methods: 'GET,PUT,POST,DELETE',
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
 
